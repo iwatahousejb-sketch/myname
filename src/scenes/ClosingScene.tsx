@@ -35,18 +35,16 @@ export const ClosingScene: React.FC = () => {
             transform: `translateY(${interpolate(p2, [0, 1], [24, 0])}px)`,
             color: theme.cream,
             fontFamily,
-            fontSize: 58,
+            fontSize: 52,
             fontWeight: 900,
             textAlign: "center",
             lineHeight: 1.5,
-            textShadow: `0 0 40px rgba(47,224,160,0.3)`,
+            textShadow: `0 0 44px rgba(242,229,200,0.2)`,
           }}
         >
-          情報を受け取り、
+          情報を受け取り、考え、
           <br />
-          考え、
-          <br />
-          <span style={{ color: theme.green }}>形にして返す道具。</span>
+          <span style={{ color: theme.gold }}>形にして返す道具。</span>
         </div>
       </div>
     </AbsoluteFill>

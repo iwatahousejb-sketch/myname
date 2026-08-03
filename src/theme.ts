@@ -1,13 +1,15 @@
 export const theme = {
-  bgDark: "#0a3530",
-  bgDeep: "#062420",
-  bgMid: "#0d4038",
-  cream: "#efe3c8",
-  creamDim: "#c9bd9f",
-  green: "#2fe0a0",
-  greenDim: "#1e9b73",
-  greenDeep: "#124a3b",
-  white: "#f7f3e8",
+  bgDeep: "#0c0e14",
+  bgMid: "#1a2030",
+  bgHigh: "#262e42",
+  cream: "#ece4d2",
+  creamDim: "#9d9787",
+  gold: "#c9a468",
+  goldDim: "#8a7350",
+  slate: "#5c6c85",
+  slateDim: "#38455a",
+  glow: "#f2e5c8",
+  white: "#f5efe0",
 } as const;
 
 export const fontFamily = "'Noto Sans JP', sans-serif";

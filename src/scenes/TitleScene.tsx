@@ -41,29 +41,29 @@ export const TitleScene: React.FC = () => {
             opacity: lineO,
           }}
         >
-          <div style={{ width: 40, height: 2, background: theme.green, transform: `scaleX(${lineO})` }} />
+          <div style={{ width: 40, height: 2, background: theme.gold, transform: `scaleX(${lineO})` }} />
           <span
             style={{
-              color: theme.green,
+              color: theme.gold,
               fontFamily,
-              fontSize: 30,
+              fontSize: 26,
               letterSpacing: 4,
               fontWeight: 500,
             }}
           >
             20秒でわかる
           </span>
-          <div style={{ width: 40, height: 2, background: theme.green, transform: `scaleX(${lineO})` }} />
+          <div style={{ width: 40, height: 2, background: theme.gold, transform: `scaleX(${lineO})` }} />
         </div>
         <div
           style={{
             color: theme.cream,
             fontFamily,
             fontWeight: 900,
-            fontSize: 96,
+            fontSize: 88,
             letterSpacing: 2,
             textAlign: "center",
-            textShadow: `0 0 40px rgba(47,224,160,0.35)`,
+            textShadow: `0 0 46px rgba(242,229,200,0.22)`,
           }}
         >
           パソコンとは？

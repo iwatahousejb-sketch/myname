@@ -17,12 +17,12 @@ export const SCENES = {
 
 export const TOTAL_DURATION = 600;
 export const FPS = 30;
-export const WIDTH = 1080;
-export const HEIGHT = 1920;
+export const WIDTH = 1920;
+export const HEIGHT = 1080;
 
 export const PcVideo: React.FC = () => {
   return (
-    <AbsoluteFill style={{ backgroundColor: "#062420" }}>
+    <AbsoluteFill style={{ backgroundColor: "#0c0e14" }}>
       <Background />
       <Sequence from={SCENES.title.from} durationInFrames={SCENES.title.duration}>
         <TitleScene />

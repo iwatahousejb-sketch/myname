@@ -14,39 +14,39 @@ export const PartsScene: React.FC = () => {
 
   const titleO = interpolate(frame, [0, 16], [0, 1], { extrapolateRight: "clamp" });
 
-  const cx = width / 2;
-  const cy = height * 0.29;
+  const cx = width * 0.28;
+  const cy = height * 0.58;
   const nodes = [
-    { key: "cpu", label: "CPU", sub: "頭脳", x: cx, y: cy, Icon: CpuNodeIcon, color: theme.green, delay: 14 },
-    { key: "ram", label: "メモリ", sub: "作業机", x: cx - 240, y: cy - 195, Icon: RamNodeIcon, color: theme.cream, delay: 30 },
-    { key: "storage", label: "ストレージ", sub: "倉庫", x: cx + 240, y: cy - 195, Icon: StorageNodeIcon, color: theme.cream, delay: 44 },
-    { key: "io", label: "入出力装置", sub: "窓口", x: cx, y: cy + 235, Icon: IoNodeIcon, color: theme.cream, delay: 58 },
+    { key: "cpu", label: "CPU", sub: "頭脳", x: cx, y: cy, Icon: CpuNodeIcon, color: theme.gold, delay: 14 },
+    { key: "ram", label: "メモリ", sub: "作業机", x: cx - 235, y: cy - 165, Icon: RamNodeIcon, color: theme.cream, delay: 30 },
+    { key: "storage", label: "ストレージ", sub: "倉庫", x: cx + 235, y: cy - 165, Icon: StorageNodeIcon, color: theme.cream, delay: 44 },
+    { key: "io", label: "入出力装置", sub: "窓口", x: cx, y: cy + 205, Icon: IoNodeIcon, color: theme.cream, delay: 58 },
   ];
 
   const lineDelay = 24;
 
-  // data viz
-  const barO = interpolate(frame, [110, 128], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const barY = interpolate(frame, [110, 128], [20, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const barO = interpolate(frame, [70, 88], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const barY = interpolate(frame, [70, 88], [20, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const bars = [
-    { label: "CPU", value: 1, unit: "超高速", start: 128 },
-    { label: "メモリ", value: 0.55, unit: "高速", start: 140 },
-    { label: "ストレージ", value: 0.16, unit: "低速", start: 152 },
+    { label: "CPU", value: 1, unit: "超高速", start: 88 },
+    { label: "メモリ", value: 0.55, unit: "高速", start: 100 },
+    { label: "ストレージ", value: 0.16, unit: "低速", start: 112 },
   ];
-  const barMaxWidth = width * 0.62;
+  const barAreaX = width * 0.58;
+  const barMaxWidth = width * 0.34;
 
   return (
     <AbsoluteFill style={{ opacity: exit }}>
       <div
         style={{
           position: "absolute",
-          top: height * 0.06,
+          top: height * 0.09,
           width: "100%",
           textAlign: "center",
           opacity: titleO,
           color: theme.cream,
           fontFamily,
-          fontSize: 42,
+          fontSize: 38,
           fontWeight: 700,
         }}
       >
@@ -65,13 +65,22 @@ export const PartsScene: React.FC = () => {
               y1={cy}
               x2={x2}
               y2={y2}
-              stroke={theme.greenDim}
-              strokeWidth={2.5}
+              stroke={theme.slate}
+              strokeWidth={2}
               strokeDasharray="1 9"
               strokeLinecap="round"
             />
           );
         })}
+        <line
+          x1={width * 0.5}
+          y1={height * 0.22}
+          x2={width * 0.5}
+          y2={height * 0.86}
+          stroke={theme.slateDim}
+          strokeWidth={1}
+          opacity={0.5}
+        />
       </svg>
 
       {nodes.map((n) => {
@@ -81,33 +90,33 @@ export const PartsScene: React.FC = () => {
             key={n.key}
             style={{
               position: "absolute",
-              left: n.x - 90,
-              top: n.y - 90,
-              width: 180,
+              left: n.x - 85,
+              top: n.y - 85,
+              width: 170,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: 6,
+              gap: 5,
               transform: `scale(${p})`,
               opacity: p,
             }}
           >
             <div
               style={{
-                width: 108,
-                height: 108,
+                width: 96,
+                height: 96,
                 borderRadius: "50%",
-                background: "rgba(47,224,160,0.07)",
-                border: `1.5px solid ${n.color}66`,
+                background: "rgba(201,164,104,0.06)",
+                border: `1.5px solid ${n.color}55`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <n.Icon color={n.color} size={56} />
+              <n.Icon color={n.color} size={50} />
             </div>
-            <span style={{ color: n.color, fontFamily, fontSize: 30, fontWeight: 700 }}>{n.label}</span>
-            <span style={{ color: theme.creamDim, fontFamily, fontSize: 16 }}>{n.sub}</span>
+            <span style={{ color: n.color, fontFamily, fontSize: 26, fontWeight: 700 }}>{n.label}</span>
+            <span style={{ color: theme.creamDim, fontFamily, fontSize: 14 }}>{n.sub}</span>
           </div>
         );
       })}
@@ -115,42 +124,41 @@ export const PartsScene: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          top: height * 0.63,
-          width: "100%",
-          padding: "0 9%",
+          left: barAreaX,
+          top: height * 0.32,
+          width: barMaxWidth + 40,
           opacity: barO,
           transform: `translateY(${barY}px)`,
         }}
       >
         <div
           style={{
-            color: theme.green,
+            color: theme.gold,
             fontFamily,
-            fontSize: 24,
+            fontSize: 22,
             letterSpacing: 3,
             fontWeight: 500,
-            marginBottom: 22,
-            textAlign: "center",
+            marginBottom: 26,
           }}
         >
           処理速度の目安
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           {bars.map((b) => {
             const bp = spring({ frame: frame - b.start, fps, config: { damping: 200 } });
             const w = barMaxWidth * b.value * bp;
             return (
               <div key={b.label} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: theme.white, fontFamily, fontSize: 26, fontWeight: 700 }}>{b.label}</span>
-                  <span style={{ color: theme.creamDim, fontFamily, fontSize: 20 }}>{b.unit}</span>
+                  <span style={{ color: theme.white, fontFamily, fontSize: 24, fontWeight: 700 }}>{b.label}</span>
+                  <span style={{ color: theme.creamDim, fontFamily, fontSize: 18 }}>{b.unit}</span>
                 </div>
                 <div
                   style={{
-                    height: 20,
+                    height: 16,
                     width: barMaxWidth,
-                    borderRadius: 10,
-                    background: "rgba(239,227,200,0.08)",
+                    borderRadius: 8,
+                    background: "rgba(236,228,210,0.08)",
                     overflow: "hidden",
                   }}
                 >
@@ -158,8 +166,8 @@ export const PartsScene: React.FC = () => {
                     style={{
                       height: "100%",
                       width: w,
-                      borderRadius: 10,
-                      background: `linear-gradient(90deg, ${theme.greenDim}, ${theme.green})`,
+                      borderRadius: 8,
+                      background: `linear-gradient(90deg, ${theme.goldDim}, ${theme.gold})`,
                     }}
                   />
                 </div>
