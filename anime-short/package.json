@@ -1,0 +1,13 @@
+{
+  "name": "anime-short",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "record": "node record.mjs",
+    "encode": "ffmpeg -y -i output/*.webm -c:v libx264 -pix_fmt yuv420p -crf 20 -c:a aac output/anime-short.mp4",
+    "generate": "npm run record && npm run encode"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}
