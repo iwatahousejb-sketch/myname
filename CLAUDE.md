@@ -54,7 +54,13 @@ cut together, and a separate short clip to insert:
 6. Trimming the insert clip's duration (e.g. "cut 0.2s off the end") means
    `trim=start=0:end=<new_duration>` — keep the head, cut the tail, unless
    told otherwise.
-7. Long ffmpeg renders (>2min) must run with `run_in_background: true` —
+7. **Default black insert clip trim (current tuned value): `trim=start=0.1:end=0.6`**
+   (0.5s duration) — after several rounds of "cut N seconds off the end"
+   landing on a 0.6s clip (`trim=start=0:end=0.6`), the next round of
+   feedback was to cut the *front* instead: drop the first 0.1s and keep
+   `0.1`→`0.6` of the original insert clip. Use this trim as the default for
+   new videos going forward instead of re-deriving from "0.6s off the head."
+8. Long ffmpeg renders (>2min) must run with `run_in_background: true` —
    the foreground Bash timeout is 2 minutes.
 
 ## Combined ranking + telop overlay (medals 1-3 + numbers 4-6 + animated labels)
