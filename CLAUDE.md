@@ -5,6 +5,26 @@ video-editing requests (TikTok/Reels-style "omnibus" compilation videos).
 No app code lives here; this file just records how to redo past requests
 without re-deriving them from scratch.
 
+## Default behavior: just sending a compilation video means "do the full treatment"
+
+When the user sends a vertical (1080x1920) omnibus/compilation video with no
+further instructions (or just "これやって" / "お願い" type requests), apply
+**both** of the following automatically, without being asked each time:
+
+1. Insert the black separator clip at every gap between segments (see
+   "Workflow: inserting a clip between segments" below). Reuse whichever
+   black insert clip was last uploaded/used in this project if one is
+   available in the session; otherwise ask for it once.
+2. Build and composite the combined ranking + telop overlay (see "Combined
+   ranking + telop overlay" below), with rank count matching the video's own
+   burned-in title (e.g. "Top5" → medals/numbers 1-5, "Top6" → 1-6).
+
+Ask the user for the per-rank label text (what each clip is about, e.g.
+"5位 夫婦", "4位 ゴルフ") if it isn't obvious/already established earlier in
+the conversation — don't guess content labels. Everything else (sizing,
+spacing, font, animation timing) should follow the tuned defaults below
+without re-asking.
+
 ## Workflow: inserting a clip between segments of an omnibus video
 
 Given a vertical (1080x1920) compilation video made of several short clips
@@ -37,48 +57,95 @@ cut together, and a separate short clip to insert:
 7. Long ffmpeg renders (>2min) must run with `run_in_background: true` —
    the foreground Bash timeout is 2 minutes.
 
-## "Ranking" overlay graphic (medals 1-3 + plain numbers 4-6)
+## Combined ranking + telop overlay (medals 1-3 + numbers 4-6 + animated labels)
 
-A recurring ask: overlay a vertical ranking list (like the "Top 6" style
-compilation videos use) on the left edge of the frame, generated with PIL
-since there's no color-emoji font available — draw it as vector shapes
-instead of using 🥇🥈🥉 glyphs.
+**This supersedes the earlier medal-only design** — the medal icons and the
+per-rank label text are now built and rendered together, as one PIL-generated
+overlay video, not composited in separate passes. Reference implementation:
+`build_combined_overlay.py` in the scratchpad from the session that tuned
+this (regenerate from the spec below rather than hunting for that temp file).
 
-Design, tuned over several iterations against reference screenshots the
-user provided (final agreed values, in 1080x1920 canvas coordinates):
+### Icons (medals 1-3, plain numbers 4-6)
 
-- `x_c = 90` — horizontal center of the whole column (left edge of frame,
-  clear of any title banner text that spans the top).
-- `start_y = 395` — top of the first ribbon. Must clear the black/pink
-  title banner that these compilation videos burn in at the top (check the
-  actual banner's bottom edge per-video; ~373px was the measured value for
-  the reference video, so 395 left a clean margin).
-- Medal diameter `D = 82`, ribbon width `Rw = 52` (`D*0.635`), ribbon
-  height `Rh = 36` (`D*0.44`).
-- Number glyph height ≈ 70px (DejaVu Sans Bold, size 96 hits this;
-  height/fontsize ≈ 0.73 for that font, useful for retuning).
+- `x_c = 90` — horizontal center of the icon column (left edge of frame).
+- Medal diameter `D = 82`, ribbon width `Rw = 52` (`D*0.635`), ribbon height
+  `Rh = 36` (`D*0.44`). Ribbon = two triangles (light blue `(74,150,235)`
+  left tail, dark blue `(18,82,165)` right tail) meeting at a point below —
+  not a rectangle, that's what reads as a ribbon rather than a flag.
 - Medal ring/fill/highlight/number colors: gold
   `(225,140,10)/(255,193,30)/(255,224,120)/(185,100,5)`, silver
   `(150,150,155)/(205,205,210)/(232,232,235)/(120,120,125)`, bronze
-  `(150,85,35)/(205,120,55)/(225,165,110)/(120,55,15)`. Ribbon: light blue
-  `(74,150,235)` on the left tail, dark blue `(18,82,165)` on the right
-  tail, meeting at a point below the ribbon (draw as two triangles, not a
-  rectangle — that's what reads as a "medal ribbon" rather than a flag).
-- Numbers 4/5/6: plain bold white text with a soft black outline (8-way
-  offset stamp at low alpha) for legibility over any footage.
-- Spacing: `gap = 20` between every element (ribbon+medal unit, or number
-  line) **except** the gap between the plain numbers 4→5 and 5→6, which the
-  user asked to be a bit larger: `gap_numbers = 32`. All gaps must be
-  perfectly uniform within their category — mismatched spacing was flagged
-  and had to be fixed.
-- The medal diameter and the number glyph height should be close to each
-  other (medal only slightly larger, ratio ~0.85), not wildly different —
-  this was explicitly requested to match a reference the user sent.
+  `(150,85,35)/(205,120,55)/(225,165,110)/(120,55,15)`. The rank number is
+  drawn *directly on* the medal (dark, ~30% down from center, DejaVu Sans
+  Bold at `D*0.62`), not as a separate white-outlined digit beside it.
+  Numbers 4/5/6 (no medal) are plain bold white with a thin black outline
+  (DejaVu Sans Bold, size 96 ≈ 70px tall).
+- **Icons are always fully opaque for the whole video** — they never fade in
+  per-rank and never dim. Only the label text (below) animates. (An earlier
+  version made icons appear one-by-one and mismatched pitch between medal
+  rows and number rows — both were flagged as wrong; don't repeat either.)
+- **Row spacing must be perfectly uniform** across all 5-6 rows — same pitch
+  medal-to-medal, medal-to-number, and number-to-number. Tuned value:
+  `row_pitch = 140`, row 1 (first medal) vertical center at `y = 472`
+  (i.e. `start_y = 395` for the ribbon top, clearing the title banner that
+  these compilation videos burn in — check the actual banner's bottom edge
+  per-video, ~373px was measured on the reference, so 395 leaves a clean
+  margin). Row *n* center = `472 + (n-1)*140`.
 
-To re-render: build the PNG overlay at 1080x1920 (transparent background),
-then `ffmpeg -i video.mp4 -i overlay.png -filter_complex "[0:v][1:v]overlay=0:0:format=auto" -c:v libx264 -crf 26 -preset veryfast -c:a copy out.mp4`.
+### Labels (the "5位 夫婦" style telop text)
 
-Always render a single still-frame composite preview (paste overlay PNG
-onto one extracted video frame) and send that first before spending time
-on a full video re-render — cheaper iteration loop for size/position
-feedback.
+- Font: **Zen Kaku Gothic New Bold** (Google Font — angular/"kaku", not
+  rounded/"maru"; fetch via
+  `https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@700`
+  → follow the `src: url(...)` in the returned CSS to the actual `.ttf` on
+  `fonts.gstatic.com`). Rejected alternatives, for reference: Kosugi Maru /
+  M PLUS Rounded 1c (too round — explicitly rejected), Dela Gothic One (too
+  heavy), Noto Sans CJK Bold (too plain/technical), IPAGothic (too thin).
+- Size 62px, outline width 3 (thin black outline — 7 was flagged as too
+  thick/heavy). White fill.
+- **Left edge of every label must line up in a straight column** —
+  compensate per-string, not a fixed draw x: `tx = label_x - textbbox(txt)[0]`
+  (different starting characters have different left-side-bearing, so
+  drawing all labels at the same nominal x without this correction produces
+  a visibly wobbly left edge — this was flagged explicitly).
+- `label_x = 160` (close to the icon column — moved in from an earlier
+  `235`, which read as too far right/disconnected from the icons).
+- Vertical center of each label = the same row center as its icon
+  (`row_centers[n]`), computed via `textbbox` top/bottom of the actual
+  string, not a fixed reference glyph — keeps numerals and kanji visually
+  centered against each other despite different glyph metrics.
+
+### Reveal animation
+
+- Countdown order: rank **6→1** (or **5→1**), i.e. the *last*/lowest rank
+  is revealed first, right when the video starts, and 1st place is revealed
+  last, at the final segment — standard suspense-countdown structure.
+- Each label's reveal is triggered at the exact start time of its
+  corresponding segment in the final (post black-insert) timeline.
+- **Typewriter effect**: characters appear one at a time over `TYPE_DUR =
+  0.4s`, preceded by a blinking `|` cursor (toggle every 0.12s) while typing.
+- **Dim on pass**: once the *next* rank's reveal starts, the previous
+  label's alpha drops from 255 to `DIM_ALPHA = 90` (stays visible, just
+  de-emphasized) and stays there — it does not disappear. The icon next to
+  it stays fully opaque throughout (see above).
+
+### Rendering approach
+
+Render the whole animated overlay as a transparent-background video first
+(this is not a single static PNG — it changes over time), then composite
+once onto the base video:
+
+```
+ffmpeg -y -f rawvideo -pixel_format rgba -video_size 1080x1920 \
+  -framerate 30 -i - -c:v qtrle -an overlay.mov   # fed frame-by-frame from a PIL loop piped via stdin
+
+ffmpeg -y -i base_video.mp4 -i overlay.mov \
+  -filter_complex "[0:v][1:v]overlay=0:0:format=auto" \
+  -c:v libx264 -crf 22 -preset veryfast -c:a copy out.mp4
+```
+
+Always render one static composite preview (paste the overlay's first/a
+mid-timeline frame onto an extracted video frame) and send that before
+spending time on the full animated render — cheap iteration loop for
+position/size/font feedback before committing to the ~1 fps-per-second PIL
+frame-loop render time.
