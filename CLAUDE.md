@@ -169,3 +169,48 @@ mid-timeline frame onto an extracted video frame) and send that before
 spending time on the full animated render — cheap iteration loop for
 position/size/font feedback before committing to the ~1 fps-per-second PIL
 frame-loop render time.
+
+## Workflow: picking specific clips out of a longer source video via screenshots
+
+The user often has a long (60-90s) raw compilation (no black inserts, no
+ranking banner — just a compilation account's watermark/caption burned in)
+and wants only a handful of clips from it pulled out and reassembled with
+the usual black insert between them. They identify which clips by sending
+phone screenshots (frames from the video, sometimes with the phone UI/volume
+slider still visible) rather than timestamps.
+
+1. Load the source video and build a 1fps contact sheet (grid of thumbnails
+   with timestamps) to get a rough sense of how many distinct clips/people
+   are in it and roughly where they fall.
+2. Run scene-cut detection to get real segment boundaries:
+   `ffmpeg -i in.mp4 -filter:v "select='gt(scene,0.3)',showinfo" -f null -`
+   (lower the threshold, e.g. 0.12-0.15, if segments feel too coarse —
+   distinct short reaction clips cut faster than the omnibus videos this
+   file mostly documents).
+3. For each screenshot the user sends, match it to a segment by content
+   (caption text burned into the screenshot, person/scene, on-screen
+   objects), then narrow to the exact start/end with fine-grained frame
+   extraction (`fps=10` or `fps=20` over just that candidate window) and a
+   quick visual grid — don't trust a single 1fps sample per screenshot,
+   short clips (well under 1s) can fall entirely between two 1fps samples
+   and get missed (this happened once: a ~2.5s clip near the 55s mark was
+   invisible at 1fps because the sampled frames landed just before/after
+   it — re-scanning at 0.1-0.5s resolution around the region the user
+   pointed to found it immediately).
+4. If a screenshot doesn't match anywhere in the video after a full scan,
+   say so explicitly and ask whether it's from a different source video —
+   don't guess a "close enough" segment. If the user insists it's in there
+   ("最後の方にあるよ" / "it's near the end"), don't re-run the same 1fps
+   scan — go straight to a fine-grained (0.5s or better) scan of the region
+   they pointed to.
+5. Once all requested segments have confirmed `(start, end)` times, build
+   one `ffmpeg -filter_complex` that does `trim`/`atrim` on the source for
+   each selected segment **in the order the user listed/sent them**, with
+   the black insert clip (`trim=start=0.1:end=0.6`, scaled/padded to the
+   source's aspect — see the black-insert workflow above) between every
+   pair, then `concat`. This does not need to preserve segments that were
+   skipped — only the picked clips + insert clips go into the timeline.
+6. Sanity-check the built video's total duration against
+   `sum(segment durations) + n_inserts * 0.5` before sending — a mismatch
+   means a trim boundary was off. Pull a check frame at each splice point
+   to confirm the right content lines up before delivering.
