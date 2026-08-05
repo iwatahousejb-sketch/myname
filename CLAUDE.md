@@ -120,6 +120,21 @@ this (regenerate from the spec below rather than hunting for that temp file).
   tight minimum via `banner_bottom + 77`, then add roughly **20-30px of
   actual margin on top of that** before finalizing — "tight" means "don't
   pad excessively," not "touch the banner exactly."
+- **Measure the banner's solid background box, not just the visible text** —
+  on that same video, `448` was *still* flagged as overlapping ("被って
+  る", "上の黒のところと被ってる"). The mistake: the banner text ("ボトル
+  フリップtop4") sits inside a black background rectangle that extends
+  well below the text's own visible bottom edge (~343px) before the actual
+  video frame content starts (~419px) — the pink pixels' bottom is not the
+  banner's real bottom. Scanning for "last bright pixel" only finds the
+  text; scanning for "last near-black-flat pixel before real image texture
+  resumes" (i.e. where actual photo/video content begins, checked at
+  several x columns across the ribbon's footprint) finds the true edge.
+  `start_center_y = 521` (419 + 77 + ~25px margin) was needed, not `448`.
+  When a screenshot complaint persists after one fix, don't just nudge the
+  same number further — re-measure the banner boundary itself; the first
+  measurement may have been reading the wrong feature (text vs. background
+  box).
 
 ### Labels (the "5位 夫婦" style telop text)
 
