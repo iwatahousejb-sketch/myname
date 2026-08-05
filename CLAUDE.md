@@ -111,6 +111,15 @@ this (regenerate from the spec below rather than hunting for that temp file).
   `525` (banner bottom 452 + 77 = 529, so ~4px margin) was confirmed to
   still clear the banner cleanly. Prefer tight margins like this over
   generous ones.
+- **But zero margin is too tight** — on a shallow-banner video (bottom
+  ~343px), using the literal `banner_bottom + 77` formula with no slack
+  (`start_center_y = 418`) put the ribbon/arrow shape flush against the
+  banner text with no gap, and it read as visibly overlapping in practice
+  (flagged with a screenshot circling the overlap). Moving to `448` (~30px
+  of real margin beyond the `+77` point) fixed it cleanly. So: compute the
+  tight minimum via `banner_bottom + 77`, then add roughly **20-30px of
+  actual margin on top of that** before finalizing — "tight" means "don't
+  pad excessively," not "touch the banner exactly."
 
 ### Labels (the "5位 夫婦" style telop text)
 
