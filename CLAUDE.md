@@ -97,6 +97,20 @@ this (regenerate from the spec below rather than hunting for that temp file).
   these compilation videos burn in — check the actual banner's bottom edge
   per-video, ~373px was measured on the reference, so 395 leaves a clean
   margin). Row *n* center = `472 + (n-1)*140`.
+- **`start_center_y` is per-video, not always 472** — some title banners
+  (e.g. two-line banners, or ones with descenders/deep kanji on the left)
+  run deeper than the ~373px reference. Pixel-scan the actual frame (dark
+  vs light at the x-columns under the ribbon's left tail, roughly
+  `x = x_c - Rw/2` to `x_c`, i.e. `x≈64` to `90`) to find the banner's true
+  bottom edge for that video, then use the **minimal safe value**:
+  `start_center_y = deepest_dark_y_near_ribbon + 77` (77 = `Rh + D/2`, the
+  distance from icon center up to the ribbon's top-left corner) — don't add
+  extra padding beyond that. An earlier round on a deep-banner video used
+  `540` (banner bottom ~452, so ~11px of unnecessary extra margin on top of
+  the required 77px), and the explicit feedback was "move it up a bit" —
+  `525` (banner bottom 452 + 77 = 529, so ~4px margin) was confirmed to
+  still clear the banner cleanly. Prefer tight margins like this over
+  generous ones.
 
 ### Labels (the "5位 夫婦" style telop text)
 
