@@ -238,3 +238,22 @@ slider still visible) rather than timestamps.
    `sum(segment durations) + n_inserts * 0.5` before sending — a mismatch
    means a trim boundary was off. Pull a check frame at each splice point
    to confirm the right content lines up before delivering.
+7. **Watch for the source account's own transition cards bleeding into a
+   segment's edge** — some compilation accounts insert their own brief
+   full-screen title card (e.g. a plain black frame with white text like
+   "low-light disaster") between clips as part of their original edit.
+   Scene-cut detection often doesn't cleanly separate a clip's last frames
+   from an adjacent title card, so a segment boundary picked from the
+   detected cut can include a handful of trailing frames of that card —
+   easy to miss because it's brief and looks similar to an intentional
+   black insert in a small thumbnail. This was caught after delivery (user
+   screenshotted a stray "low-light disaster" card in the output) and
+   traced to 4 of 5 picked clips all having a few contaminated frames at
+   their *end* boundary specifically (the card appears right after each
+   clip, not before). Fix: before finalizing, scrub 0.01-0.05s increments
+   around every segment's start **and** end against the *original* source
+   video (not just the built output) and nudge the boundary to the last
+   clean frame before any title-card text appears; re-verify the final
+   build frame-by-frame afterward (e.g. `fps=10` over the whole thing,
+   check for stray text on near-black frames) rather than trusting the
+   splice-point spot-checks alone.
