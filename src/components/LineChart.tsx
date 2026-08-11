@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { interpolate, useCurrentFrame } from "remotion";
-import { theme, fontFamily } from "../theme";
+import { theme, serifFontFamily } from "../theme";
 
 export type LineChartPoint = { label: string; value: number };
 
@@ -109,7 +109,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         const labelX = i === 0 ? c.x + 4 : i === points.length - 1 ? c.x - 4 : c.x;
         return (
           <g key={i} opacity={o}>
-            <text x={labelX} y={height - 6} textAnchor={anchor} fill={theme.creamDim} fontFamily={fontFamily} fontSize={16}>
+            <text x={labelX} y={height - 6} textAnchor={anchor} fill={theme.creamDim} fontFamily={serifFontFamily} fontSize={16}>
               {p.label}
             </text>
             <text
@@ -117,7 +117,7 @@ export const LineChart: React.FC<LineChartProps> = ({
               y={c.y - 14}
               textAnchor={anchor}
               fill={theme.white}
-              fontFamily={fontFamily}
+              fontFamily={serifFontFamily}
               fontSize={17}
               fontWeight={700}
             >

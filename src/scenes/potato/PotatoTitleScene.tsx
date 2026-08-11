@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { theme, fontFamily } from "../../theme";
+import { theme, serifFontFamily } from "../../theme";
 import { PotatoIcon } from "../../components/HistoryIcons";
 import { CaptionSequence } from "../../components/CaptionSequence";
 
@@ -10,8 +10,7 @@ export const PotatoTitleScene: React.FC = () => {
 
   const enter = spring({ frame, fps, config: { damping: 200 } });
   const iconP = spring({ frame: frame - 4, fps, config: { damping: 12, mass: 0.6 } });
-  const lineO = interpolate(frame, [16, 30], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const exit = interpolate(frame, [durationInFrames - 16, durationInFrames], [1, 0], {
+  const exit = interpolate(frame, [durationInFrames - 14, durationInFrames], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -19,21 +18,14 @@ export const PotatoTitleScene: React.FC = () => {
   return (
     <AbsoluteFill style={{ opacity: exit }}>
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
           <div style={{ transform: `scale(${iconP})`, opacity: iconP, marginBottom: 4 }}>
             <PotatoIcon size={58} color={theme.gold} />
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 14, opacity: lineO }}>
-            <div style={{ width: 40, height: 2, background: theme.gold }} />
-            <span style={{ color: theme.gold, fontFamily, fontSize: 24, letterSpacing: 4, fontWeight: 500 }}>
-              3分でわかる歴史
-            </span>
-            <div style={{ width: 40, height: 2, background: theme.gold }} />
           </div>
           <div
             style={{
               color: theme.cream,
-              fontFamily,
+              fontFamily: serifFontFamily,
               fontWeight: 900,
               fontSize: 68,
               letterSpacing: 1,
@@ -51,9 +43,12 @@ export const PotatoTitleScene: React.FC = () => {
         </div>
       </AbsoluteFill>
       <CaptionSequence
+        fontFamily={serifFontFamily}
         items={[
-          { text: "たった一つの作物が、人口を大きく変えたとしたら?", from: 320, to: 580 },
-          { text: "なぜ、それほどの力があったのか", from: 650, to: 950 },
+          { text: "もしも、たった一つの野菜が、ヨーロッパの人口を大きく変えたと聞いたらどう思うでしょうか", from: 40, to: 268 },
+          { text: "実はジャガイモの伝来は、旧世界の人口増加のかなりの部分を説明できるという研究結果があります", from: 290, to: 528 },
+          { text: "一説には「ジャガイモがなければヨーロッパの人口は今の姿になっていなかった」とさえ言われています", from: 550, to: 799 },
+          { text: "なぜたった一つの作物に、それほどの力があったのでしょうか", from: 821, to: 969 },
         ]}
       />
     </AbsoluteFill>

@@ -1,6 +1,6 @@
 import React from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import { theme, fontFamily } from "../theme";
+import { theme, fontFamily as defaultFontFamily } from "../theme";
 
 export type CaptionItem = {
   text: string;
@@ -16,7 +16,7 @@ const estimateWidth = (text: string, fontSize: number) => {
   return units * fontSize;
 };
 
-const fitFontSize = (text: string, maxWidth: number, baseSize: number, minSize = 20) => {
+const fitFontSize = (text: string, maxWidth: number, baseSize: number, minSize = 12) => {
   const w = estimateWidth(text, baseSize);
   if (w <= maxWidth) return baseSize;
   return Math.max(minSize, baseSize * (maxWidth / w));
@@ -32,7 +32,8 @@ export const CaptionLine: React.FC<{
   baseSize?: number;
   color?: string;
   weight?: number;
-}> = ({ text, opacity, y, maxWidth = 1600, baseSize = 32, color = theme.white, weight = 500 }) => {
+  fontFamily?: string;
+}> = ({ text, opacity, y, maxWidth = 1820, baseSize = 32, color = theme.white, weight = 500, fontFamily = defaultFontFamily }) => {
   const fontSize = fitFontSize(text, maxWidth, baseSize);
   return (
     <div
@@ -61,7 +62,8 @@ export const CaptionSequence: React.FC<{
   maxWidth?: number;
   baseSize?: number;
   color?: string;
-}> = ({ items, y, maxWidth = 1600, baseSize = 32, color = theme.white }) => {
+  fontFamily?: string;
+}> = ({ items, y, maxWidth = 1820, baseSize = 32, color = theme.white, fontFamily = defaultFontFamily }) => {
   const frame = useCurrentFrame();
   const { height } = useVideoConfig();
   const bottom = y ?? height * 0.88;
@@ -77,7 +79,16 @@ export const CaptionSequence: React.FC<{
           { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
         );
         return (
-          <CaptionLine key={i} text={item.text} opacity={o} y={bottom} maxWidth={maxWidth} baseSize={baseSize} color={color} />
+          <CaptionLine
+            key={i}
+            text={item.text}
+            opacity={o}
+            y={bottom}
+            maxWidth={maxWidth}
+            baseSize={baseSize}
+            color={color}
+            fontFamily={fontFamily}
+          />
         );
       })}
     </>

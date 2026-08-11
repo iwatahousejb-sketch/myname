@@ -13,3 +13,4 @@ export const theme = {
 } as const;
 
 export const fontFamily = "'Noto Sans JP', sans-serif";
+export const serifFontFamily = "'Noto Serif JP', serif";

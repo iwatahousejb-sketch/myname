@@ -1,6 +1,6 @@
 import React from "react";
 import { interpolate, useCurrentFrame } from "remotion";
-import { theme, fontFamily } from "../theme";
+import { theme, serifFontFamily } from "../theme";
 import { ShipIcon } from "./HistoryIcons";
 
 type RouteMapProps = {
@@ -45,12 +45,12 @@ export const RouteMap: React.FC<RouteMapProps> = ({ width, height, startFrame, f
       )}
 
       <g opacity={landO}>
-        <text x={x1} y={cy + 70} textAnchor="middle" fill={theme.cream} fontFamily={fontFamily} fontSize={22} fontWeight={700}>
+        <text x={x1} y={cy + 70} textAnchor="middle" fill={theme.cream} fontFamily={serifFontFamily} fontSize={22} fontWeight={700}>
           {fromLabel}
         </text>
       </g>
       <g opacity={interpolate(frame - startFrame, [240, 280], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}>
-        <text x={x2} y={cy + 70} textAnchor="middle" fill={theme.cream} fontFamily={fontFamily} fontSize={22} fontWeight={700}>
+        <text x={x2} y={cy + 70} textAnchor="middle" fill={theme.cream} fontFamily={serifFontFamily} fontSize={22} fontWeight={700}>
           {toLabel}
         </text>
       </g>

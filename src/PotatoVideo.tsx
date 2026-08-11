@@ -17,23 +17,23 @@ import { CaveatScene } from "./scenes/potato/CaveatScene";
 import { ClosingPotatoScene } from "./scenes/potato/ClosingPotatoScene";
 
 export const POTATO_SCENES = {
-  title: { from: 0, duration: 1050 },
-  andes: { from: 1050, duration: 1350 },
-  exchange: { from: 2400, duration: 1350 },
-  rejection: { from: 3750, duration: 1350 },
-  frederick: { from: 5100, duration: 1350 },
-  france: { from: 6450, duration: 1620 },
-  russia: { from: 8070, duration: 1260 },
-  energy: { from: 9330, duration: 1260 },
-  impact: { from: 10590, duration: 1260 },
-  irelandBoom: { from: 11850, duration: 1260 },
-  famine: { from: 13110, duration: 1440 },
-  industrial: { from: 14550, duration: 1260 },
-  caveat: { from: 15810, duration: 1080 },
-  closing: { from: 16890, duration: 1440 },
+  title: { from: 0, duration: 1069 },
+  andes: { from: 1069, duration: 645 },
+  exchange: { from: 1714, duration: 723 },
+  rejection: { from: 2437, duration: 1400 },
+  frederick: { from: 3837, duration: 1546 },
+  france: { from: 5383, duration: 1849 },
+  russia: { from: 7232, duration: 1366 },
+  energy: { from: 8598, duration: 2008 },
+  impact: { from: 10606, duration: 1659 },
+  irelandBoom: { from: 12265, duration: 1006 },
+  famine: { from: 13271, duration: 1976 },
+  industrial: { from: 15247, duration: 1611 },
+  caveat: { from: 16858, duration: 2005 },
+  closing: { from: 18863, duration: 1400 },
 };
 
-export const POTATO_TOTAL_DURATION = 18330;
+export const POTATO_TOTAL_DURATION = 20263;
 export const POTATO_FPS = 30;
 export const POTATO_WIDTH = 1920;
 export const POTATO_HEIGHT = 1080;
